@@ -4,7 +4,20 @@ all_radius = zeros(18, 1);
 all_corrs = zeros(18, 1);
 disp('making a struct')
 tic
-for i = 1:18
+
+
+% Pattern to match files starting with 'c' and ending with '.mat'
+filePattern = 'c*.mat';
+
+% Get a list of files that match the pattern
+files = dir(filePattern);
+
+% Count the number of files
+numFiles = numel(files);
+
+% Display the number of files
+disp(['Number of files: ', num2str(numFiles)]);
+for i = 1:numFiles
     
 
     fname = strcat('c', num2str(i), '.mat');
@@ -45,7 +58,7 @@ for i = 1:18
 
     all_segments_struct(i).best_fit_circle_correlation = max_corr;
     all_segments_struct(i).best_fit_circle_radius = radius_range(max_idx);
-    all_segments_struct(i).best_fit_circle = generate_circle(centroidX, centroidY, radius_range(max_idx), size(seg, 1), size(seg, 2));
+    all_segments_struct(i).best_fit_circle = generate_circle(centroidX, centroidY, radius_range(max_idx)+10, size(seg, 1), size(seg, 2));
 
     % sgtitle(strcat('Max Correlation: ', num2str(max_corr), ' at radius: ', num2str(radius_range(max_idx))));
     
@@ -76,4 +89,9 @@ toc
 for i = 1:4
     subplot(2,2,i)
     imagesc(arena_masks(i).mask);
+end
+
+for i = 1:4
+    mat = arena_masks(i).mask;
+    save(strcat('c', num2str(i), '.mat'), 'mat');
 end
